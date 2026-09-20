@@ -5,7 +5,9 @@
     "moduleResolution": "NodeNext",
     "outDir": "dist",
     "rootDir": "../..",
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*.ts", "prisma/**/*.ts", "../../packages/shared/src/**/*.ts"],
   "exclude": ["test"]
