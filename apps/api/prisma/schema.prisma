@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String
+  sessions Session[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Session {
+  id String @id @default(cuid())
+  tokenHash String @unique
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([expiresAt])
+}
+model ProjectCategory {
+  id String @id @default(cuid())
+  name String @unique
+  slug String @unique
+  sortOrder Int @default(0)
+  projects Project[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Project {
+  id String @id @default(cuid())
+  title String
+  slug String @unique
+  excerpt String
+  description String @default("")
+  client String @default("")
+  projectType String @default("")
+  year Int
+  role String @default("")
+  thumbnail String @default("")
+  coverImage String @default("")
+  videoUrl String @default("")
+  liveUrl String @default("")
+  githubUrl String @default("")
+  content Json @default("[]")
+  featured Boolean @default(false)
+  published Boolean @default(false)
+  sortOrder Int @default(0)
+  seoTitle String @default("")
+  seoDescription String @default("")
+  categoryId String?
+  category ProjectCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  technologies ProjectTechnology[]
+  gallery ProjectMedia[]
+  testimonials Testimonial[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([published, featured, sortOrder])
+  @@index([categoryId])
+}
+model Technology {
+  id String @id @default(cuid())
+  name String @unique
+  projects ProjectTechnology[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model ProjectTechnology {
+  projectId String
+  technologyId String
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  @@id([projectId, technologyId])
+}
+model ProjectMedia {
+  id String @id @default(cuid())
+  projectId String
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  mediaId String
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  layout String @default("landscape")
+  sortOrder Int @default(0)
+  @@index([projectId, sortOrder])
+}
+model Service {
+  id String @id @default(cuid())
+  title String
+  description String
+  icon String @default("code")
+  sortOrder Int @default(0)
+  published Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model SkillCategory {
+  id String @id @default(cuid())
+  name String @unique
+  skills Skill[]
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Skill {
+  id String @id @default(cuid())
+  name String
+  categoryId String
+  category SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  sortOrder Int @default(0)
+  published Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Experience {
+  id String @id @default(cuid())
+  company String
+  position String
+  employmentType String @default("Freelance")
+  startDate String
+  endDate String @default("")
+  description String
+  technologies String[]
+  logo String @default("")
+  website String @default("")
+  sortOrder Int @default(0)
+  published Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Testimonial {
+  id String @id @default(cuid())
+  name String
+  company String @default("")
+  avatar String @default("")
+  review String
+  rating Int @default(5)
+  projectId String?
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  featured Boolean @default(false)
+  published Boolean @default(false)
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model ContactMessage {
+  emailStatus String @default("not_requested")
+  emailAttempts Int @default(0)
+  emailNextAttemptAt DateTime?
+  emailProviderId String?
+  emailError String?
+  emailFirstAttemptAt DateTime?
+  @@index([emailStatus, emailNextAttemptAt])
+  id String @id @default(cuid())
+  name String
+  email String
+  company String @default("")
+  projectType String
+  budget String @default("")
+  message String
+  read Boolean @default(false)
+  status String @default("New")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([read, createdAt])
+}
+model SiteSetting {
+  id String @id @default("main")
+  data Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Media {
+  id String @id @default(cuid())
+  name String
+  url String
+  storageKey String @unique
+  driver String
+  mimeType String
+  size Int
+  width Int
+  height Int
+  alt String @default("")
+  projects ProjectMedia[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

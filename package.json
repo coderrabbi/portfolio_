@@ -1,0 +1,31 @@
+{
+  "name": "gr-portfolio",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm run dev -w @gr/api\" \"npm run dev -w @gr/web\"",
+    "build": "npm run build -w @gr/api && npm run build -w @gr/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint apps packages --max-warnings 0",
+    "format": "prettier --write apps packages README.md",
+    "test": "npm run test -w @gr/api",
+    "db:generate": "npm run db:generate -w @gr/api",
+    "db:migrate": "npm run db:migrate -w @gr/api",
+    "db:seed": "npm run db:seed -w @gr/api"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "26.6.1",
+    "concurrently": "10.0.5",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.9.8",
+    "tsx": "4.23.13",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "8.70.0"
+  }
+}

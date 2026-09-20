@@ -1,0 +1,19 @@
+node_modules/
+.next/
+dist/
+.env
+.env.local
+uploads/
+coverage/
+*.tsbuildinfo
+generated/
+test-results/
+.sites-runtime/
+
+# Private environment settings and database backups
+.env.*
+!.env.example
+!.env.*.example
+*.log
+*.dump
+*.backup
