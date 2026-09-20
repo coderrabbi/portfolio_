@@ -20,6 +20,17 @@ app.use(
   express.json({ limit: '1mb' }),
   cookieParser(),
 );
+app.get('/uploads/:file', async (req, res, next) => {
+  const file = String(req.params.file);
+  if (!/^[a-zA-Z0-9_-]+\.webp$/.test(file)) return next();
+  const key = file.slice(0, -5);
+  const rows = await db.$queryRaw<
+    { data: Uint8Array; mimeType: string }[]
+  >`SELECT "data", "mimeType" FROM "ImageBlob" WHERE "key" = ${key}`;
+  if (!rows.length) return next();
+  res.set('Cache-Control', 'public, max-age=31536000, immutable');
+  res.type(rows[0].mimeType).send(Buffer.from(rows[0].data));
+});
 app.use(
   '/uploads',
   express.static(config.UPLOAD_DIR, { dotfiles: 'deny', maxAge: '1y', immutable: true }),

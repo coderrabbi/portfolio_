@@ -3,6 +3,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import sharp, { type OutputInfo } from 'sharp';
+import { db } from './db.js';
 import { config } from './config.js';
 import { HttpError } from './middleware.js';
 interface StoredImage {
@@ -31,6 +32,18 @@ export async function storeImage(buffer: Buffer): Promise<StoredImage> {
     throw new HttpError(422, 'Choose a valid JPEG, PNG, WebP, or AVIF image.');
   }
   const storageKey = randomUUID();
+  if (config.STORAGE_DRIVER === 'database') {
+    await db.$executeRaw`INSERT INTO "ImageBlob" ("key", "data", "mimeType") VALUES (${storageKey}, ${image}, ${'image/webp'})`;
+    return {
+      url: `/uploads/${storageKey}.webp`,
+      storageKey,
+      driver: 'database',
+      width: info.width,
+      height: info.height,
+      size: image.length,
+      mimeType: 'image/webp',
+    };
+  }
   if (config.STORAGE_DRIVER === 'cloudinary') {
     cloudinary.config({
       cloud_name: config.CLOUDINARY_CLOUD_NAME,
@@ -64,7 +77,9 @@ export async function storeImage(buffer: Buffer): Promise<StoredImage> {
   };
 }
 export async function deleteImage(driver: string, key: string) {
-  if (driver === 'cloudinary') {
+  if (driver === 'database') {
+    await db.$executeRaw`DELETE FROM "ImageBlob" WHERE "key" = ${key}`;
+  } else if (driver === 'cloudinary') {
     cloudinary.config({
       cloud_name: config.CLOUDINARY_CLOUD_NAME,
       api_key: config.CLOUDINARY_API_KEY,

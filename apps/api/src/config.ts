@@ -11,7 +11,7 @@ const schema = z.object({
   HOST: z.string().default('127.0.0.1'),
   TRUST_PROXY: z.string().default('loopback'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  STORAGE_DRIVER: z.enum(['local', 'cloudinary']).default('local'),
+  STORAGE_DRIVER: z.enum(['local', 'cloudinary', 'database']).default('local'),
   UPLOAD_DIR: z.string().default('./uploads'),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),

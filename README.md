@@ -48,3 +48,7 @@ Enter your Resend key only in apps/api/.env or your hosting secret manager. The 
 The source was built and linted successfully during the latest About-section change; the production copy excludes compiled output and must be rebuilt on its target host. Local website and API health checks passed when this package was created. No production database or hosting credentials have been configured or tested.
 
 Previously reported high-severity Prisma tooling dependency advisories remain unresolved; review and resolve applicable findings before public deployment. See DEVELOPMENT-NOTES.md for architecture and prior validation details. Its localhost commands and demo credentials are historical development instructions, not production settings.
+
+## Neon image storage (20 September 2026)
+
+Set STORAGE_DRIVER=database to store optimized WebP image bytes in PostgreSQL/Neon. Apply all committed migrations before starting the API. Images are served through /uploads/:key.webp with immutable cache headers; the Next.js proxy forwards these requests to BACKEND_URL. Keep the backend running to serve images; Neon is the database, not a public image CDN. Existing database-backed media references work when using the same Neon database. API credentials remain server-only. Current portraits and local uploads were copied into Neon; local originals are retained as backups. A fresh demo seed still references bundled images. Database storage and transfer usage grows with uploaded images. This supersedes local-upload storage guidance above when using the database driver.
