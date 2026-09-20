@@ -12,9 +12,6 @@ test-results/
 
 # Private environment settings and database backups
 .env.*
-.env.example
-!.env.example
-!.env.*.example
 *.log
 *.dump
 *.backup
