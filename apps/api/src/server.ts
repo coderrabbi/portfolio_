@@ -1,10 +1,10 @@
 import { startEmailWorker } from './email.js';
 import { app } from './app.js';
-import { config } from './config.js';
 import { db } from './db.js';
-const server = app.listen(config.PORT, config.HOST, () =>
-  console.log(`Portfolio API ready on http://127.0.0.1:${config.PORT}`),
-);
+const port = Number(process.env.PORT) || 4000;
+const server = app.listen(port, '0.0.0.0', () => {
+  console.log(`Portfolio API ready on port ${port}`);
+});
 const stopEmailWorker = startEmailWorker();
 async function close() {
   server.close();
