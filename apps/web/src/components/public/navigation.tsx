@@ -48,7 +48,7 @@ export function Navbar({ settings: s }: { settings: Settings }) {
       if (e.key === 'Escape') setOpen(false);
       if (e.key === 'Tab') {
         const items = [
-          ...(navRef.current?.querySelectorAll<HTMLAnchorElement>('a') || []),
+          ...Array.from(navRef.current?.querySelectorAll<HTMLAnchorElement>('a') ?? []),
           menuRef.current,
         ].filter((v): v is HTMLAnchorElement | HTMLButtonElement => v !== null);
         if (e.shiftKey && document.activeElement === items[0]) {
